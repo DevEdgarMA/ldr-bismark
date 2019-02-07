@@ -18,6 +18,10 @@ int umbral;
 int cambiar_luz;
 int nivel_luz;
 int presencia;
+unsigned long tiempo1;
+unsigned long tiempo2;
+float tiempo;
+bool bandera_presencia = false;
 
 void setup() {
   pinMode(pir, INPUT);
@@ -28,6 +32,10 @@ void loop() {
   presencia = digitalRead(pir);
   
   if(presencia == 1){
+    if(!bandera_presencia){
+      tiempo1 = millis();
+      bandera_presencia = true;
+    }
     umbral = analogRead(pot_umbral);
     umbral = map(umbral, 0, 1024, 0, 100);
     nivel_luz = analogRead(nivel_luz);
@@ -40,6 +48,16 @@ void loop() {
     }
     else{
       analogWrite(0, led);
+    }
+  }
+  else{
+    if(bandera_presencia){
+      tiempo2 = millis();
+      tiempo = tiempo2 - tiempo1;
+      tiempo = tiempo/60;
+
+      Serial.println(tiempo);
+      bandera_presencia = false;
     }
   }
 }
